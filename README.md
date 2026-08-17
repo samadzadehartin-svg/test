@@ -1,6 +1,6 @@
-# Safar Iranian — Complete V1 + Video Hero
+# safaroiranian — Complete V1 + Video Hero
 
-نسخه کامل اولیه بازطراحی سایت سفر ایرانیان با رابط RTL دارک و لوکس و بک‌گراند ویدیویی Hero.
+نسخه کامل اولیه بازطراحی سایت safaroiranian با رابط RTL دارک و لوکس و بک‌گراند ویدیویی Hero.
 
 ## Stack
 - Frontend: Next.js 16 + React 19
@@ -48,3 +48,9 @@ npm run dev
 - `frontend/public/videos/hero-istanbul-poster.jpg`
 
 ویدیو به‌صورت `autoplay + muted + loop + playsInline` اجرا می‌شود و یک لایه تیره برای خوانایی متن روی آن قرار گرفته است. برای کاربرانی که Reduce Motion را فعال کرده‌اند، تصویر Poster نمایش داده می‌شود.
+
+
+تغییرات نسخه به‌روزشده:
+- نام برند در رابط کاربری به safaroiranian تغییر کرد.
+- فیلد تاریخ به صورت شمسی (سال/ماه/روز) پیاده‌سازی شد.
+- Hero از ویدیو MP4 داخلی پروژه استفاده می‌کند و فقط برای حالت کاهش حرکت از پوستر استفاده می‌شود.

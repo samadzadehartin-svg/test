@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "سفر ایرانیان | تورهای خاص، تجربه‌های ماندگار",
-  description: "جستجو، مقایسه و رزرو تورهای خارجی و داخلی با سفر ایرانیان",
+  title: "safaroiranian | تورهای خاص، تجربه‌های ماندگار",
+  description: "جستجو، مقایسه و رزرو تورهای خارجی و داخلی با safaroiranian",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

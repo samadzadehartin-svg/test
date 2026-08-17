@@ -11,13 +11,47 @@ import { Destination, fallbackDestinations, fallbackTours, Tour } from "@/lib/da
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
 
 const formatPrice = (value: number) => new Intl.NumberFormat("fa-IR").format(value);
+const persianMonthNames = [
+  "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+];
+const toFaDigits = (value: string | number) => new Intl.NumberFormat("fa-IR").format(Number(String(value).replace(/[^0-9]/g, ""))) || String(value);
+
+function getTodayJalali() {
+  const parts = new Intl.DateTimeFormat("en-US-u-ca-persian", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(new Date());
+
+  const read = (type: "year" | "month" | "day") => Number(parts.find((part) => part.type === type)?.value || 0);
+
+  return {
+    year: read("year"),
+    month: read("month"),
+    day: read("day"),
+  };
+}
+
+function formatJalaliDate(year: number, month: number, day: number) {
+  return `${toFaDigits(year)}/${toFaDigits(String(month).padStart(2, "0"))}/${toFaDigits(String(day).padStart(2, "0"))}`;
+}
+
+function getJalaliDaysInMonth(month: number) {
+  if (month <= 6) return 31;
+  if (month <= 11) return 30;
+  return 29;
+}
 
 export default function HomePage() {
   const [destinations, setDestinations] = useState<Destination[]>(fallbackDestinations);
   const [tours, setTours] = useState<Tour[]>(fallbackTours);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState("");
+  const todayJalali = useMemo(() => getTodayJalali(), []);
+  const [jalaliYear, setJalaliYear] = useState(todayJalali.year);
+  const [jalaliMonth, setJalaliMonth] = useState(todayJalali.month);
+  const [jalaliDay, setJalaliDay] = useState(todayJalali.day);
   const [travelers, setTravelers] = useState("2");
 
   useEffect(() => {
@@ -34,10 +68,22 @@ export default function HomePage() {
       });
   }, []);
 
+  const maxDays = useMemo(() => getJalaliDaysInMonth(jalaliMonth), [jalaliMonth]);
+
+  useEffect(() => {
+    if (jalaliDay > maxDays) {
+      setJalaliDay(maxDays);
+    }
+  }, [jalaliDay, maxDays]);
+
+  const jalaliDate = useMemo(() => formatJalaliDate(jalaliYear, jalaliMonth, jalaliDay), [jalaliYear, jalaliMonth, jalaliDay]);
+  const yearOptions = useMemo(() => Array.from({ length: 4 }, (_, index) => todayJalali.year + index), [todayJalali.year]);
+  const dayOptions = useMemo(() => Array.from({ length: maxDays }, (_, index) => index + 1), [maxDays]);
+
   const searchSummary = useMemo(() => {
-    if (!destination && !date) return "";
-    return `${destination || "همه مقصدها"}${date ? ` • ${date}` : ""} • ${travelers} مسافر`;
-  }, [destination, date, travelers]);
+    if (!destination && !jalaliDate) return "";
+    return `${destination || "همه مقصدها"}${jalaliDate ? ` • ${jalaliDate}` : ""} • ${travelers} مسافر`;
+  }, [destination, jalaliDate, travelers]);
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#05080a] text-white">
@@ -45,7 +91,7 @@ export default function HomePage() {
         <div className="container-shell flex h-20 items-center justify-between gap-6">
           <a href="#" className="flex items-center gap-3 font-black text-[#e6b96d]">
             <span className="grid size-11 place-items-center rounded-2xl border border-[#e6b96d]/30 bg-[#e6b96d]/10 shadow-[0_0_30px_rgba(230,185,109,.12)]"><Plane className="size-5 -rotate-45" /></span>
-            <span><b className="block tracking-wide">SAFAR IRANIAN</b><small className="font-medium text-white/60">سفر ایرانیان</small></span>
+            <span><b className="block tracking-wide">safaroiranian</b><small className="font-medium text-white/60">safaroiranian</small></span>
           </a>
 
           <nav className="hidden items-center gap-7 text-sm text-white/70 lg:flex">
@@ -62,7 +108,7 @@ export default function HomePage() {
 
       {mobileOpen && (
         <div className="fixed inset-0 z-[70] bg-black/90 p-6 backdrop-blur-2xl lg:hidden">
-          <div className="flex items-center justify-between"><span className="font-black text-[#e6b96d]">سفر ایرانیان</span><button className="btn btn-ghost btn-square" onClick={() => setMobileOpen(false)}><X /></button></div>
+          <div className="flex items-center justify-between"><span className="font-black text-[#e6b96d]">safaroiranian</span><button className="btn btn-ghost btn-square" onClick={() => setMobileOpen(false)}><X /></button></div>
           <div className="mt-12 grid gap-2 text-xl">
             {["تورها", "مقاصد", "تور لحظه آخری", "تور ساز", "مجله سفر", "درباره ما"].map((x) => <a key={x} href="#" className="rounded-2xl p-4 hover:bg-white/5">{x}</a>)}
           </div>
@@ -76,7 +122,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           poster="/videos/hero-istanbul-poster.jpg"
           aria-hidden="true"
         >
@@ -94,7 +140,7 @@ export default function HomePage() {
           <div className="glass-panel mt-12 max-w-6xl p-3 sm:p-4">
             <div className="grid gap-3 lg:grid-cols-[1.2fr_1fr_.7fr_auto]">
               <label className="search-field"><span>مقصد</span><div><MapPin /><input value={destination} onChange={(e) => setDestination(e.target.value)} placeholder="مثلاً استانبول" /></div></label>
-              <label className="search-field"><span>تاریخ سفر</span><div><CalendarDays /><input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div></label>
+              <label className="search-field"><span>تاریخ سفر (شمسی)</span><div className="jalali-picker"><CalendarDays /><select aria-label="سال سفر" value={jalaliYear} onChange={(e) => setJalaliYear(Number(e.target.value))}>{yearOptions.map((year) => <option key={year} value={year}>{toFaDigits(year)}</option>)}</select><select aria-label="ماه سفر" value={jalaliMonth} onChange={(e) => setJalaliMonth(Number(e.target.value))}>{persianMonthNames.map((monthName, index) => <option key={monthName} value={index + 1}>{monthName}</option>)}</select><select aria-label="روز سفر" value={jalaliDay} onChange={(e) => setJalaliDay(Number(e.target.value))}>{dayOptions.map((day) => <option key={day} value={day}>{toFaDigits(day)}</option>)}</select></div></label>
               <label className="search-field"><span>تعداد مسافر</span><div><UserRound /><select value={travelers} onChange={(e) => setTravelers(e.target.value)}>{[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} نفر</option>)}</select></div></label>
               <button className="btn-gold min-h-16 px-7"><Search className="size-5" /> پیدا کردن تور</button>
             </div>
@@ -105,7 +151,7 @@ export default function HomePage() {
       </section>
 
       <section id="destinations" className="section-space container-shell">
-        <SectionTitle title="مقاصد محبوب" subtitle="پرطرفدارترین انتخاب‌های مسافران سفر ایرانیان" />
+        <SectionTitle title="مقاصد محبوب" subtitle="پرطرفدارترین انتخاب‌های مسافران safaroiranian" />
         <div className="hide-scrollbar flex snap-x gap-4 overflow-x-auto pb-5">
           {destinations.map((item) => (
             <article key={item.id} className="destination-card group min-w-[185px] snap-start sm:min-w-[220px]">
@@ -143,7 +189,7 @@ export default function HomePage() {
       </section>
 
       <section id="why" className="section-space container-shell">
-        <SectionTitle title="چرا سفر ایرانیان؟" subtitle="فقط تور نمی‌فروشیم؛ خیال راحت سفر را می‌سازیم" />
+        <SectionTitle title="چرا safaroiranian؟" subtitle="فقط تور نمی‌فروشیم؛ خیال راحت سفر را می‌سازیم" />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <Feature icon={<Heart />} title="همراهی تا پایان سفر" text="پشتیبانی قبل، حین و بعد سفر" />
           <Feature icon={<ShieldCheck />} title="پرداخت امن" text="فرآیند شفاف و مطمئن" />
@@ -169,13 +215,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 py-10"><div className="container-shell flex flex-col justify-between gap-4 text-sm text-white/40 sm:flex-row"><span>© سفر ایرانیان — تمامی حقوق محفوظ است.</span><span>طراحی نسخه جدید Safar Iranian</span></div></footer>
+      <footer className="border-t border-white/10 py-10"><div className="container-shell flex flex-col justify-between gap-4 text-sm text-white/40 sm:flex-row"><span>© safaroiranian — تمامی حقوق محفوظ است.</span><span>طراحی نسخه جدید safaroiranian</span></div></footer>
     </main>
   );
 }
 
 function SectionTitle({ title, subtitle, action }: { title: string; subtitle: string; action?: string }) {
-  return <div className="mb-8 flex items-end justify-between gap-5"><div><span className="eyebrow">SAFAR IRANIAN</span><h2 className="mt-2 text-2xl font-black sm:text-3xl">{title}</h2><p className="mt-2 text-sm text-white/40">{subtitle}</p></div>{action && <button className="hidden items-center gap-2 text-sm text-white/50 hover:text-[#e6b96d] sm:flex">{action}<ChevronLeft className="size-4" /></button>}</div>;
+  return <div className="mb-8 flex items-end justify-between gap-5"><div><span className="eyebrow">safaroiranian</span><h2 className="mt-2 text-2xl font-black sm:text-3xl">{title}</h2><p className="mt-2 text-sm text-white/40">{subtitle}</p></div>{action && <button className="hidden items-center gap-2 text-sm text-white/50 hover:text-[#e6b96d] sm:flex">{action}<ChevronLeft className="size-4" /></button>}</div>;
 }
 
 function TourCard({ tour }: { tour: Tour }) {

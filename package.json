@@ -1,5 +1,5 @@
 {
-  "name": "safaroiranian-v1",
+  "name": "safaroiranian",
   "private": true,
   "scripts": {
     "dev:frontend": "npm --prefix frontend run dev",

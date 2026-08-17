@@ -42,6 +42,7 @@ a { text-decoration: none; }
   object-position: center 48%;
   filter: saturate(.82) contrast(1.06) brightness(.74);
   transform: scale(1.015);
+  pointer-events: none;
 }
 .hero-video-overlay {
   background:
@@ -186,4 +187,29 @@ a { text-decoration: none; }
   .section-space { padding-block: 52px; }
   .hero-scene { min-height: 920px; }
   .hero-video { object-position: 61% center; }
+}
+
+.jalali-picker {
+  display: grid;
+  grid-template-columns: auto 1fr 1.2fr .9fr;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.jalali-picker select {
+  border: 0;
+  outline: 0;
+  min-width: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,.05);
+  color: white;
+  padding: 10px 12px;
+}
+@media (max-width: 820px) {
+  .jalali-picker {
+    grid-template-columns: auto 1fr;
+  }
+  .jalali-picker select {
+    grid-column: span 1;
+  }
 }
