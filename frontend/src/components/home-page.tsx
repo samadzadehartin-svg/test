@@ -47,6 +47,7 @@ export default function HomePage() {
   const [destinations, setDestinations] = useState<Destination[]>(fallbackDestinations);
   const [tours, setTours] = useState<Tour[]>(fallbackTours);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [destination, setDestination] = useState("");
   const todayJalali = useMemo(() => getTodayJalali(), []);
   const [jalaliYear, setJalaliYear] = useState(todayJalali.year);
@@ -68,6 +69,28 @@ export default function HomePage() {
       });
   }, []);
 
+  useEffect(() => {
+    let ticking = false;
+    const updateScroll = () => {
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      setScrollProgress(Math.min(window.scrollY / maxScroll, 1));
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
+    };
+    updateScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", updateScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", updateScroll);
+    };
+  }, []);
+
   const maxDays = useMemo(() => getJalaliDaysInMonth(jalaliMonth), [jalaliMonth]);
 
   useEffect(() => {
@@ -86,12 +109,29 @@ export default function HomePage() {
   }, [destination, jalaliDate, travelers]);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#05080a] text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-transparent text-white">
+      <div className="site-video-bg" aria-hidden="true">
+        <video
+          className="site-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/videos/hero-istanbul-poster.jpg"
+          style={{ transform: `translate3d(0, ${-scrollProgress * 7}%, 0) scale(${1.12 + scrollProgress * 0.05})` }}
+        >
+          <source src="/videos/hero-istanbul.mp4" type="video/mp4" />
+        </video>
+        <div className="site-video-overlay" />
+      </div>
+
+      <div className="relative z-10">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/55 backdrop-blur-2xl">
         <div className="container-shell flex h-20 items-center justify-between gap-6">
           <a href="#" className="flex items-center gap-3 font-black text-[#e6b96d]">
             <span className="grid size-11 place-items-center rounded-2xl border border-[#e6b96d]/30 bg-[#e6b96d]/10 shadow-[0_0_30px_rgba(230,185,109,.12)]"><Plane className="size-5 -rotate-45" /></span>
-            <span><b className="block tracking-wide">safaroiranian</b><small className="font-medium text-white/60">safaroiranian</small></span>
+            <span><b className="block tracking-wide">سفروایرانیان</b><small className="font-medium text-white/60">safaroiranian</small></span>
           </a>
 
           <nav className="hidden items-center gap-7 text-sm text-white/70 lg:flex">
@@ -108,7 +148,7 @@ export default function HomePage() {
 
       {mobileOpen && (
         <div className="fixed inset-0 z-[70] bg-black/90 p-6 backdrop-blur-2xl lg:hidden">
-          <div className="flex items-center justify-between"><span className="font-black text-[#e6b96d]">safaroiranian</span><button className="btn btn-ghost btn-square" onClick={() => setMobileOpen(false)}><X /></button></div>
+          <div className="flex items-center justify-between"><span className="font-black text-[#e6b96d]">سفروایرانیان</span><button className="btn btn-ghost btn-square" onClick={() => setMobileOpen(false)}><X /></button></div>
           <div className="mt-12 grid gap-2 text-xl">
             {["تورها", "مقاصد", "تور لحظه آخری", "تور ساز", "مجله سفر", "درباره ما"].map((x) => <a key={x} href="#" className="rounded-2xl p-4 hover:bg-white/5">{x}</a>)}
           </div>
@@ -116,20 +156,7 @@ export default function HomePage() {
       )}
 
       <section className="hero-scene relative min-h-[820px] overflow-hidden pt-28">
-        <video
-          className="hero-video absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/videos/hero-istanbul-poster.jpg"
-          aria-hidden="true"
-        >
-          <source src="/videos/hero-istanbul.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-video-overlay absolute inset-0" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_20%,rgba(230,185,109,.11),transparent_28%),linear-gradient(180deg,rgba(2,5,7,.06),#05080a_94%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_20%,rgba(230,185,109,.10),transparent_30%),linear-gradient(180deg,rgba(2,5,7,.02),rgba(5,8,10,.16)_75%,rgba(5,8,10,.30)_100%)]" />
         <div className="container-shell relative z-10 flex min-h-[690px] flex-col justify-center pt-8">
           <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#e6b96d]/25 bg-[#e6b96d]/10 px-4 py-2 text-sm text-[#f0ce93]"><Sparkles className="size-4" /> تجربه سفر، دقیقاً مطابق سلیقه شما</div>
@@ -151,7 +178,7 @@ export default function HomePage() {
       </section>
 
       <section id="destinations" className="section-space container-shell">
-        <SectionTitle title="مقاصد محبوب" subtitle="پرطرفدارترین انتخاب‌های مسافران safaroiranian" />
+        <SectionTitle title="مقاصد محبوب" subtitle="پرطرفدارترین انتخاب‌های مسافران سفروایرانیان" />
         <div className="hide-scrollbar flex snap-x gap-4 overflow-x-auto pb-5">
           {destinations.map((item) => (
             <article key={item.id} className="destination-card group min-w-[185px] snap-start sm:min-w-[220px]">
@@ -189,7 +216,7 @@ export default function HomePage() {
       </section>
 
       <section id="why" className="section-space container-shell">
-        <SectionTitle title="چرا safaroiranian؟" subtitle="فقط تور نمی‌فروشیم؛ خیال راحت سفر را می‌سازیم" />
+        <SectionTitle title="چرا سفروایرانیان؟" subtitle="فقط تور نمی‌فروشیم؛ خیال راحت سفر را می‌سازیم" />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <Feature icon={<Heart />} title="همراهی تا پایان سفر" text="پشتیبانی قبل، حین و بعد سفر" />
           <Feature icon={<ShieldCheck />} title="پرداخت امن" text="فرآیند شفاف و مطمئن" />
@@ -215,7 +242,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 py-10"><div className="container-shell flex flex-col justify-between gap-4 text-sm text-white/40 sm:flex-row"><span>© safaroiranian — تمامی حقوق محفوظ است.</span><span>طراحی نسخه جدید safaroiranian</span></div></footer>
+      <footer className="border-t border-white/10 py-10"><div className="container-shell flex flex-col justify-between gap-4 text-sm text-white/40 sm:flex-row"><span>© سفروایرانیان — تمامی حقوق محفوظ است.</span><span>safaroiranian</span></div></footer>
+      </div>
     </main>
   );
 }
