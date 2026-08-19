@@ -1,58 +1,75 @@
-# safaroiranian — Complete V1 + Video Hero
+# SafaroIranian — Next.js + NestJS
 
-نسخه کامل اولیه بازطراحی سایت safaroiranian با رابط RTL دارک و لوکس و بک‌گراند ویدیویی Hero.
+نسخه سبک و Server-First سایت تور.
 
-## Stack
-- Frontend: Next.js 16 + React 19
-- Backend: Node.js + NestJS 11
-- CSS/UI: Tailwind CSS 4 + DaisyUI 5
+## معماری
+- Frontend: Next.js App Router
+- Backend: Node.js + NestJS
+- CSS/UI: Tailwind CSS + daisyUI
+- JavaScript سمت کاربر: حداقلی؛ صفحه اصلی و مسیر رزرو Client Component ندارند.
+- فیلترها با Query String و رندر سمت سرور کار می‌کنند.
+- بدون Framer Motion، Swiper، jQuery، icon pack و state manager.
+- UI کارت‌ها با CSS سبک ساخته شده و برای ظاهر اصلی به تصویر یا اسلایدر سنگین وابسته نیست.
 
 ## اجرا
-### Backend
-```bash
-cd backend
-npm install
-npm run start:dev
-```
-API روی `http://localhost:4000/api` اجرا می‌شود.
 
-### Frontend
-در یک ترمینال دیگر:
 ```bash
-cd frontend
 npm install
-cp .env.example .env.local
-npm run dev
+cp .env.example apps/web/.env.local
+cp .env.example apps/api/.env
 ```
-سایت روی `http://localhost:3000` اجرا می‌شود.
 
-## APIهای فعلی
-- `GET /api/health`
-- `GET /api/destinations`
+ترمینال ۱:
+```bash
+npm run dev:api
+```
+
+ترمینال ۲:
+```bash
+npm run dev:web
+```
+
+Frontend:
+`http://localhost:3000`
+
+API:
+`http://localhost:4000/api`
+
+## API
 - `GET /api/tours`
-- `GET /api/tours?destination=استانبول`
+- `GET /api/tours/:id`
+- `POST /api/leads`
+- `GET /api/health`
 
-## قدم‌های بعدی پیشنهادی
-- PostgreSQL + Prisma یا TypeORM
-- احراز هویت و پنل مدیریت
-- CRUD تور، هتل، پرواز، مقصد و مقاله
-- موتور جستجو و فیلتر واقعی
-- فرم لید و اتصال به CRM
-- رزرو/پرداخت
-- SEO صفحات مقصد و تور
+### فیلتر تور
+مثال:
+`/api/tours?continent=asia&tripType=international&budget=mid`
 
-
-## ویدیوی Hero
-فایل‌های ویدیو داخل پروژه قرار دارند و نیازی به لینک خارجی ندارند:
-- `frontend/public/videos/hero-istanbul.mp4`
-- `frontend/public/videos/hero-istanbul-poster.jpg`
-
-ویدیو به‌صورت `autoplay + muted + loop + playsInline` اجرا می‌شود و یک لایه تیره برای خوانایی متن روی آن قرار گرفته است. برای کاربرانی که Reduce Motion را فعال کرده‌اند، تصویر Poster نمایش داده می‌شود.
+## نکته تولید
+فعلاً Leadها در حافظه نگهداری می‌شوند. برای نسخه واقعی، `LeadsService` را به CRM/Database وصل کنید.
 
 
-تغییرات نسخه به‌روزشده:
-- نام نمایشی برند در رابط کاربری به «سفروایرانیان» و شناسه/نام پروژه به `safaroiranian` تنظیم شد.
-- فیلد تاریخ به صورت شمسی (سال/ماه/روز) پیاده‌سازی شد.
-- Hero از ویدیو MP4 داخلی پروژه استفاده می‌کند و فقط برای حالت کاهش حرکت از پوستر استفاده می‌شود.
+## پنل مدیریت و کارشناس
 
-- ویدئو اکنون پس‌زمینه ثابت تمام صفحه است و با اسکرول افکت پارالاکس/زوم ملایم می‌گیرد.
+ورود کارکنان: `http://localhost:3000/staff/login`
+
+حساب‌های دموی توسعه (در production حتماً از `.env` تغییر دهید):
+
+- مدیر: `admin / admin123`
+- کارشناس: `expert / expert123`
+
+### پنل مدیر
+- `/admin` داشبورد فروش
+- `/admin/leads` مدیریت درخواست‌ها، تخصیص کارشناس، وضعیت و یادداشت
+- `/admin/tours` مدیریت قیمت، برچسب و انتشار تور
+- `/admin/team` عملکرد و بار کاری کارشناسان
+
+### پنل کارشناس
+- `/expert` کارهای امروز و صف آزاد
+- `/expert/leads` پرونده‌های اختصاصی، Claim درخواست جدید، وضعیت و یادداشت
+
+### معماری سبک پنل
+- بدون کتابخانه Chart، Data Grid، Icon Pack یا State Manager
+- احراز هویت با session در حافظه NestJS و HttpOnly cookie در Next.js
+- فرم‌ها با Server Actions؛ صفحات پنل Server Component باقی مانده‌اند
+- داده‌های Lead و Session فعلاً In-Memory هستند. برای production باید PostgreSQL/Redis یا سرویس‌های معادل متصل شوند.

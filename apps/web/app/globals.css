@@ -1,0 +1,370 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --paper: #fbfaf7;
+  --paper-2: #f3f0ea;
+  --ink: #171715;
+  --muted: #777168;
+  --line: #e6e1d8;
+  --gold: #b89a64;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Tahoma, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: var(--ink);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid #171715;
+  outline-offset: 3px;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid #171715;
+  outline-offset: 3px;
+}
+
+/* Header */
+.site-header {
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.02);
+}
+
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-dot {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgb(0 0 0 / 0.16);
+  border-radius: 999px;
+  font-family: Georgia, serif;
+  font-size: 13px;
+}
+
+.header-link {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 12px;
+  color: rgb(0 0 0 / 0.46);
+  font-size: 9px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.header-link:hover {
+  background: #f2eee7;
+  color: #111;
+}
+
+.search-dock {
+  isolation: isolate;
+}
+
+.filter-cell {
+  position: relative;
+  min-width: 0;
+  padding: 8px 13px;
+  border-left: 1px solid rgb(0 0 0 / 0.055);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.filter-cell:hover {
+  background: #fcfbf9;
+}
+
+.filter-kicker {
+  display: block;
+  margin-bottom: 2px;
+  color: rgb(0 0 0 / 0.37);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.filter-icon {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  background: #f2eee7;
+  color: rgb(0 0 0 / 0.48);
+  font-size: 10px;
+}
+
+.active-filter-chip {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0 11px;
+  color: rgb(0 0 0 / 0.58);
+  font-size: 9px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.active-filter-chip span {
+  color: rgb(0 0 0 / 0.3);
+  font-size: 12px;
+}
+
+.active-filter-chip:hover {
+  border-color: rgb(0 0 0 / 0.18);
+  background: #f5f2ec;
+  color: #111;
+}
+
+/* Tour cards: visual treatment uses CSS only; no image payload. */
+.city-surface {
+  background:
+    radial-gradient(circle at 78% 20%, rgb(255 255 255 / 0.20), transparent 28%),
+    linear-gradient(145deg, #283b35, #9c8064);
+}
+
+.city-surface::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.01), rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.36));
+  content: "";
+  pointer-events: none;
+}
+
+.city-noise {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgb(255 255 255 / 0.42) 0.45px, transparent 0.45px);
+  background-size: 7px 7px;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+}
+
+.city-monogram {
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  z-index: 1;
+  transform: translateY(-50%);
+  color: rgb(255 255 255 / 0.095);
+  font-family: Georgia, serif;
+  font-size: clamp(84px, 9vw, 138px);
+  line-height: 1;
+}
+
+.city-surface[data-city="istanbul"] { background: linear-gradient(145deg, #1d2731, #8d735b); }
+.city-surface[data-city="van"] { background: linear-gradient(145deg, #264238, #a7bfa7); }
+.city-surface[data-city="antalya"] { background: linear-gradient(145deg, #17404a, #c69b6b); }
+.city-surface[data-city="kish"] { background: linear-gradient(145deg, #0f4551, #79b7b4); }
+.city-surface[data-city="mashhad"] { background: linear-gradient(145deg, #3c2e25, #b89b7a); }
+.city-surface[data-city="armenia"] { background: linear-gradient(145deg, #41312f, #a77a6d); }
+.city-surface[data-city="georgia"] { background: linear-gradient(145deg, #2d3b31, #8da081); }
+.city-surface[data-city="oman"] { background: linear-gradient(145deg, #4b3528, #bea27f); }
+.city-surface[data-city="russia"] { background: linear-gradient(145deg, #2f3340, #a8a9b4); }
+.city-surface[data-city="thailand"] { background: linear-gradient(145deg, #284541, #d1a667); }
+.city-surface[data-city="bali"] { background: linear-gradient(145deg, #314233, #8faa83); }
+.city-surface[data-city="malaysia"] { background: linear-gradient(145deg, #1c3f45, #8bb3a5); }
+.city-surface[data-city="vietnam"] { background: linear-gradient(145deg, #303d2c, #b3a164); }
+.city-surface[data-city="baku"] { background: linear-gradient(145deg, #27344a, #a39069); }
+.city-surface[data-city="dubai"] { background: linear-gradient(145deg, #332a25, #c5a05e); }
+.city-surface[data-city="qatar"] { background: linear-gradient(145deg, #4d2536, #c59ca8); }
+.city-surface[data-city="tunisia"] { background: linear-gradient(145deg, #61402d, #c99568); }
+.city-surface[data-city="brazil"] { background: linear-gradient(145deg, #214631, #b0bd68); }
+
+/* Destination navigation */
+.continent-pill[aria-current="page"] {
+  border-color: #eee8dc;
+  background: #eee8dc;
+  color: #171715;
+}
+
+.continent-pill[aria-current="page"] span {
+  color: rgb(0 0 0 / 0.48);
+}
+
+.continent-scroller {
+  scrollbar-width: none;
+}
+
+.continent-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* Reservation */
+.reservation-summary {
+  position: relative;
+  overflow: hidden;
+}
+
+.reservation-summary::after {
+  position: absolute;
+  right: -110px;
+  bottom: -150px;
+  width: 330px;
+  height: 330px;
+  border: 1px solid rgb(255 255 255 / 0.06);
+  border-radius: 999px;
+  box-shadow: 0 0 0 60px rgb(255 255 255 / 0.018), 0 0 0 120px rgb(255 255 255 / 0.01);
+  content: "";
+  pointer-events: none;
+}
+
+.reservation-step {
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgb(255 255 255 / 0.09);
+  border-radius: 14px;
+  padding: 10px;
+  color: rgb(255 255 255 / 0.32);
+}
+
+.reservation-step b,
+.reservation-step span {
+  display: block;
+}
+
+.reservation-step b {
+  font-size: 9px;
+}
+
+.reservation-step span {
+  margin-top: 5px;
+  font-size: 8px;
+}
+
+.reservation-step.done {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.reservation-step.current {
+  border-color: #eee8dc;
+  background: #eee8dc;
+  color: #171715;
+}
+
+.success-step {
+  border-radius: 14px;
+  background: #f5f2ec;
+  padding: 12px;
+}
+
+.success-step b,
+.success-step span {
+  display: block;
+}
+
+.success-step b {
+  color: rgb(0 0 0 / 0.3);
+  font-size: 9px;
+}
+
+.success-step span {
+  margin-top: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+@media (max-width: 767px) {
+  .site-header {
+    position: sticky;
+  }
+
+  .search-dock {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-cell:nth-child(2) {
+    border-left: 0;
+  }
+
+  .filter-cell:nth-child(1),
+  .filter-cell:nth-child(2) {
+    border-bottom: 1px solid rgb(0 0 0 / 0.055);
+  }
+
+  .filter-cell:nth-child(3) {
+    border-left: 1px solid rgb(0 0 0 / 0.055);
+  }
+}
+
+@media (max-width: 430px) {
+  .brand-lockup strong {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+  }
+
+  .brand-dot {
+    width: 31px;
+    height: 31px;
+  }
+
+  .filter-cell {
+    padding-inline: 10px;
+  }
+
+  .filter-icon {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,9 +1,17 @@
 {
   "name": "safaroiranian",
   "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
   "scripts": {
-    "dev:frontend": "npm --prefix frontend run dev",
-    "dev:backend": "npm --prefix backend run start:dev",
-    "build": "npm --prefix frontend run build && npm --prefix backend run build"
+    "dev:web": "npm run dev --workspace @safaro/web",
+    "dev:api": "npm run start:dev --workspace @safaro/api",
+    "build:web": "npm run build --workspace @safaro/web",
+    "build:api": "npm run build --workspace @safaro/api"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
