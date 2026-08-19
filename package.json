@@ -1,0 +1,9 @@
+{
+  "name": "safaroiranian-v1",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run start:dev",
+    "build": "npm --prefix frontend run build && npm --prefix backend run build"
+  }
+}
