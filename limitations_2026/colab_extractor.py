@@ -22,7 +22,7 @@ except ImportError:
 
 # Public GitHub repository with selected research PubMed IDs and metadata.
 ROOT='https://raw.githubusercontent.com/samadzadehartin-svg/test/main/limitations_2026'
-MANIFEST_URL=ROOT+'/ranked_articles.csv'
+MANIFEST_URL=ROOT+'/ranked_articles_manifest.csv'
 DEST=Path('/content/limitations_oa_results' if Path('/content').exists() else 'limitations_oa_results')
 DEST.mkdir(parents=True,exist_ok=True)
 CACHE=DEST/'verified_records.jsonl'
