@@ -1,0 +1,18 @@
+{
+  "source_files": 12,
+  "source_records": 12087,
+  "per_file_rule": "all if <300, top 200 if >300",
+  "selected_slots": 1821,
+  "duplicate_slots_by_pmid": 709,
+  "unique_pmids": 1112,
+  "likely_preprint_published_pairs": 3,
+  "section_counts": {
+    "1": 173,
+    "2": 117,
+    "3": 248,
+    "4": 304,
+    "5": 87,
+    "6": 183
+  },
+  "note": "Article selection from 12 user-provided PubMed HTML exports; exact full-text accessibility is determined during online Colab extraction."
+}
