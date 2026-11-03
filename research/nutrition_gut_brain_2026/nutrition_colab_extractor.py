@@ -171,6 +171,9 @@ def main():
         if file.exists():
             try:x=json.loads(file.read_text(encoding="utf-8"))
             except Exception:x=fetch(pmid,topic)
+            if x.get("status") in ("metadata_unavailable","oa_fulltext_xml_not_available","xml_without_body"):
+                x=fetch(pmid,topic)
+                file.write_text(json.dumps(x,ensure_ascii=False),encoding="utf-8")
         else:
             x=fetch(pmid,topic)
             file.write_text(json.dumps(x,ensure_ascii=False),encoding="utf-8")
