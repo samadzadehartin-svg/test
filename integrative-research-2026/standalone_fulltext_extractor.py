@@ -219,11 +219,15 @@ def selected_ids(custom=None):
                     for i,r in enumerate(csv.DictReader(io.StringIO(data),delimiter='\t'))]
         texts=[data]
     else:
-        texts=[]
-        for part in range(1,7):
-            r=get(PREFIX+'selected_ids_'+format(part,'02d')+'.txt')
-            if r is None:raise RuntimeError('GitHub manifest part '+str(part)+' unavailable. Try again or upload article_ids.tsv and set --manifest.')
-            texts.append(r.text)
+        master=get('https://raw.githubusercontent.com/samadzadehartin-svg/test/main/integrative-research-2026/selected_ids.txt')
+        if master is not None:
+            texts=[master.text]
+        else:
+            texts=[]
+            for part in range(1,7):
+                r=get(PREFIX+'selected_ids_'+format(part,'02d')+'.txt')
+                if r is None:raise RuntimeError('GitHub manifest unavailable; retry or upload article_ids.tsv with --manifest.')
+                texts.append(r.text)
     found=[];seen=set()
     for data in texts:
         for pair in data.strip().replace('\n','').split(','):
