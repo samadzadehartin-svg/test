@@ -5,14 +5,19 @@
 ## Reproducible article list on GitHub
 Six numbered `parts/selected_ids_01.txt` to `selected_ids_06.txt` files make up the *complete* 1,112-article, ranked, de-duplicated list. Each entry contains `PMID:review_section_number`; the script verifies all 1,112 IDs before starting.
 
-## ONE-LINE Google Colab command
-Paste this entire line into a code cell, then run:
+## ONE-LINE Google Colab command (single-file version)
+
+Paste this whole line into a Colab code cell and run:
 
 ```python
-!pip -q install requests python-docx && python -c "import urllib.request as u; b='https://raw.githubusercontent.com/samadzadehartin-svg/test/main/integrative-research-2026/'; [u.urlretrieve(b+n,n) for n in ('colab_fulltext_extractor.py','retrieval_utils.py','make_docx.py')]" && python colab_fulltext_extractor.py
+!pip -q install requests python-docx && python -c "import urllib.request as u; u.urlretrieve('https://raw.githubusercontent.com/samadzadehartin-svg/test/main/integrative-research-2026/standalone_fulltext_extractor.py','extractor.py')" && python extractor.py
 ```
 
-Colab downloads the three Python files from GitHub automatically; they retrieve the six GitHub manifest parts. No manual article list upload is required. Every 25 articles, progress is printed. Network/API errors are retried and individual failures do not halt the job. Cached results are saved under `/content/IntegrativeResearch/cache` (a fresh Colab runtime is temporary; copy the folder to Google Drive for persistence).
+Optional alternative: download the three separate Python modules `colab_fulltext_extractor.py`, `retrieval_utils.py`, `make_docx.py`, then run the first file. The standalone script contains all three modules together.
+
+**Article index:** `selected_ids.txt` (all 1,112 PMIDs and section labels in a single file) and `article_ids.tsv` (same entries in spreadsheet-friendly format). Six subfiles provide an integrity-checked fallback.
+
+Colab downloads the single standalone Python file; it retrieves the master GitHub manifest, with six-part fallback. No manual article list upload is required. Every 25 articles, progress is printed. Network/API errors are retried and individual failures do not halt the job. Cached results are saved under `/content/IntegrativeResearch/cache` (a fresh Colab runtime is temporary; copy the folder to Google Drive for persistence).
 
 ## What the Colab job generates
 - `Integrative_Evidence_Paragraphs.docx`: reference information + exact selected body paragraph when accessible; otherwise exact abstract clearly labeled `ABSTRACT_ONLY`.
