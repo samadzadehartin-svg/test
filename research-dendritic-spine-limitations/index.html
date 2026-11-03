@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1252 PubMed references — Spine limitations</title><style>body{font:15px/1.5 system-ui;max-width:1100px;margin:30px auto;padding:0 15px;color:#182c46;background:#f8fafc}header{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 10px #ddd}input{padding:12px;width:75%;border-radius:8px;border:1px solid #aac}article{padding:14px;margin:8px 0;border-radius:10px;background:white;border:1px solid #dee6ef}a{color:#1b64a8;text-decoration:none}.muted{color:#6b7480;font-size:12px}</style></head><body><header><h1>Selected PubMed literature (1,252 unique PMIDs)</h1><p>Limitations and Future Research Directions · 9 user-provided HTMLs, individual per-file cap of 400, duplicates removed. Titles and metadata load from Europe PMC.</p><input id="search" placeholder="Search by title, PMID, year, author…"><span id="progress"></span></header><main id="results"></main><script>
+(async()=>{
+const src=await fetch('./selected_pmids_delta.b64').then(r=>{if(!r.ok)throw new Error('Catalog not found');return r.text()});
+const bytes=Uint8Array.from(atob(src.trim()),x=>x.charCodeAt(0));
+const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
+const deltas=(await new Response(stream).text()).split(',').map(Number);
+let sum=0;const pmids=deltas.map(d=>{sum+=d;return String(sum)});
+const results=document.querySelector('#results'),status=document.querySelector('#progress'),q=document.querySelector('#search');
+const items=pmids.map(p=>({pmid:p,title:'PMID '+p,author:'',year:''}));
+function paint(){const term=q.value.toLowerCase();results.replaceChildren();let n=0;for(const x of items){if(!(x.pmid+' '+x.title+' '+x.author+' '+x.year).toLowerCase().includes(term))continue;n++;const el=document.createElement('article');el.innerHTML='<a href="https://pubmed.ncbi.nlm.nih.gov/'+x.pmid+'/" target="_blank" rel="noopener"></a><div class="muted"></div>';el.querySelector('a').textContent=x.title;el.querySelector('.muted').textContent=[x.year,x.author,'PMID '+x.pmid].filter(Boolean).join(' · ');results.appendChild(el)}status.textContent=' Showing '+n+' of '+items.length;}
+q.oninput=paint;paint();
+let found=0;
+for(let i=0;i<pmids.length;i+=35){const slice=pmids.slice(i,i+35), query='('+slice.map(p=>'EXT_ID:'+p).join(' OR ')+') AND SRC:MED';
+try {const r=await fetch('https://www.ebi.ac.uk/europepmc/webservices/rest/search?'+new URLSearchParams({query,format:'json',resultType:'lite',pageSize:'100'})); if(!r.ok)continue; const list=(await r.json()).resultList.result;const map=new Map(list.map(v=>[String(v.pmid||v.id),v]));for(let j=i;j<Math.min(i+35,pmids.length);j++){const v=map.get(pmids[j]);if(v){items[j].title=v.title||items[j].title;items[j].year=v.pubYear||'';items[j].author=v.authorString||'';found++}} if(i%175===0)paint();}catch(e){} }
+paint();status.textContent+=' | Metadata resolved for '+found+' papers';
+})().catch(err=>{document.querySelector('#progress').textContent='Error: '+err.message+'; open both files on the same web server.'});
+</script></body></html>
