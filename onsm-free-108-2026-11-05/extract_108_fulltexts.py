@@ -568,12 +568,16 @@ def main():
     log(f"Word: {args.output} | Live HTML: ONSM_108_Live_Status.html")
     log("CSV/JSON audit: ONSM_108_Extraction_Report.*")
     log("Unmodified sources: "+archives)
+    result_zip="ONSM_108_Results.zip"
+    with zipfile.ZipFile(result_zip,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=6) as zf:
+        for name in (args.output,"ONSM_108_Live_Status.html",
+                     "ONSM_108_Extraction_Report.csv","ONSM_108_Extraction_Report.json"):
+            zf.write(name,arcname=Path(name).name)
+    log("Consolidated results for one-click download: "+result_zip)
     if args.auto_download:
         try:
             from google.colab import files as colab_files
-            colab_files.download(args.output)
-            colab_files.download("ONSM_108_Live_Status.html")
-            colab_files.download("ONSM_108_Extraction_Report.csv")
+            colab_files.download(result_zip)
         except ImportError:
             log("Not running in Google Colab: files are in the current working folder.")
 
