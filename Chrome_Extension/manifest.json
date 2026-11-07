@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Daneshlink DOI Assistant - Universal GitHub Edition",
+  "version": "4.1.0",
+  "description": "User-supplied DOI queue, sequential searches, verified Chrome download completion, retry and refresh. For authorized research use.",
+  "permissions": [
+    "storage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://d.danshlink.ir/*",
+    "http://d.danshlink.ir/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://d.danshlink.ir/*",
+        "http://d.danshlink.ir/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
